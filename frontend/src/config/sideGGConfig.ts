@@ -1,0 +1,28 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+export const FETCH_GAME_ACTIONS_INTERVAL = 3500;
+export const FETCH_SCORES_INTERVAL = 5000;
+export const SIDE_GG_TOEKN = "jwtToken";
+export const GAME_STATUS_FINAL = "End Game"
+
+export const SIDEGG_SERVER = process.env.NEXT_PUBLIC_SIDEGG_SERVER
+export const FETCH_CODESTATUS_API = process.env.NEXT_PUBLIC_FETCH_CODESTATUS_API
+export const CREAT_USER = process.env.NEXT_PUBLIC_CREAT_USER
+export const GET_GAME_INFO = process.env.NEXT_PUBLIC_GET_GAME_INFO
+export const UPDATE_USERNAME = process.env.NEXT_PUBLIC_UPDATE_USERNAME
+export const UPDATE_USER_STATUS = process.env.NEXT_PUBLIC_UPDATE_USER_STATUS
+export const PLAYGAME = process.env.NEXT_PUBLIC_PLAYGAME
+export const FETCH_GAME_ACTIONS = process.env.NEXT_PUBLIC_FETCH_GAME_ACTIONS
+export const FETCH_USER_INFO = process.env.NEXT_PUBLIC_FETCH_USER_INFO
+export const FETCH_MESSAGES = process.env.NEXT_PUBLIC_FETCH_MESSAGES
+export const FETCH_USER_GAME_INFO = process.env.NEXT_PUBLIC_FETCH_USER_GAME_INFO
+export const FETCH_TEAM_SCORE = process.env.NEXT_PUBLIC_FETCH_TEAM_SCORE
+export const FETCH_PERIOD_CLOCK = process.env.NEXT_PUBLIC_FETCH_PERIOD_CLOCK
+export const FETCH_GAME_INITIAL_DATA = process.env.NEXT_PUBLIC_FETCH_GAME_INITIAL_DATA
+export const GAME_STATUS_INTERVAL = process.env.NEXT_PUBLIC_GAME_STATUS_INTERVAL
+export const USRE_GAME_SCORE = process.env.NEXT_PUBLIC_FETCH_USRE_GAME_SCORE
+export const SET_USRE_GAME_SCORE = process.env.NEXT_PUBLIC_SET_USRE_GAME_SCORE
+export const GET_USRE_GAME_DETAIL = process.env.NEXT_PUBLIC_GET_USRE_GAME_DETAIL
+export const GET_USRE_GAME_GET_OR_LOASS_SCORE = process.env.NEXT_PUBLIC_GET_USRE_GAME_GET_OR_LOASS_SCORE
+export const GAME_STATUS = process.env.NEXT_PUBLIC_GAME_STATUS || "STATUS"

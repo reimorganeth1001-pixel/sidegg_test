@@ -1,0 +1,162 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Team {
+  id                String        @id @unique // Unique ESPN Game ID
+  name              String
+  abbbreviation     String
+  location          String
+  displayName       String
+  shortDisplayName  String
+  slug              String
+  logo              String
+
+  homeGames         Game[]        @relation("HomeGames")
+  awayGames         Game[]        @relation("AwayGames")
+  actions           GameAction[]
+  userstats         UserStats[]
+  userGames         UserGame[]
+}
+
+model Game {
+  gameId      String     @id @unique // Unique ESPN Game ID
+  fullName    String
+  shortName   String
+  city        String
+  state       String
+  logo        String
+  homeTeamId  String
+  awayTeamId  String
+  status      String
+  period      Int        @default(1)
+  startTime   DateTime
+  lastUpdated DateTime   @updatedAt
+  // selected    Int        @default(0)
+
+  teamA       Team       @relation("HomeGames", fields: [homeTeamId], references: [id], onDelete: Cascade)
+  teamB       Team       @relation("AwayGames", fields: [awayTeamId], references: [id], onDelete: Cascade)
+
+  actions     GameAction[]
+  userStats   UserStats[]
+  userGames   UserGame[]
+  chat        Chat[]
+}
+
+model ActionType {
+  id                String        @id @unique
+  actionType        String        @unique
+  score             Int           @default(0)
+  pointsValue       Int           @default(0)
+  quantityValue     Int           @default(0)
+  quantityValueSucc Int           @default(0)
+  created_at        DateTime
+  updated_at        DateTime      @default(now())
+
+  gameActions       GameAction[]
+}
+
+model GameAction {
+  id                String        @id @unique
+  gameId            String
+  teamId            String
+  actionId          String
+  description       String
+  clock             String        // represents the game clock time when a particular play occurred, indicates time remaining in the current period
+  period            Int           @default(0)
+  wallClock         DateTime      // real-world time when the play happened, ISO 8601 format, reflects the actual date and time the play occurred
+  scoreValue        Int           @default(0)
+  awayScore         Int           @default(0)
+  homeScore         Int           @default(0)
+  created_at        DateTime
+  updated_at        DateTime      @default(now())
+
+  // Optional: Create a foreign key manually if needed for reference integrity
+  team              Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  game              Game          @relation(fields: [gameId], references: [gameId], onDelete: Cascade)
+  actionTypes       ActionType    @relation(fields: [actionId], references: [id], onDelete: Cascade)
+  
+  userStats         UserStats[]
+}
+
+model User {
+  id                String        @id @default(uuid())
+  userName          String
+  emailAddr         String?       @unique
+  twitterAccount    String?       @unique
+  phoneNumber       String?       @unique
+  score             Int           @default(0)
+  status            Int           @default(0)  
+  selectedGameId    String?       @default("")  
+
+  created_at        DateTime
+  updated_at        DateTime      @default(now())
+
+  userstats         UserStats[]
+  userGames         UserGame[]
+  chat              Chat[]
+
+  @@unique([emailAddr, twitterAccount, phoneNumber])
+}
+
+model UserStats {
+  id                String        @id @default(uuid())
+  gameId            String
+  userId            String
+  teamId            String
+  gameActionId      String        
+  score             Int           @default(0)
+  period            Int           @default(0)
+  additionalType    String        @default("")
+  created_at        DateTime
+  updated_at        DateTime      @default(now())
+
+  game              Game          @relation(fields: [gameId], references: [gameId], onDelete: Cascade)
+  users             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  teams             Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  actiontype        GameAction    @relation(fields: [gameActionId], references: [id], onDelete: Cascade)
+}
+
+model UserGame {
+  id                String        @id @default(uuid())
+  userId            String
+  gameId            String
+  teamId            String
+  status            String
+  score             Int           @default(0)
+  startScore        Int           @default(0)
+  created_at        DateTime
+  updated_at        DateTime      @default(now())
+
+  game              Game          @relation(fields: [gameId], references: [gameId], onDelete: Cascade)
+  users             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  teams             Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, gameId])
+}
+
+
+
+model Chat {
+  id                String        @id @default(uuid())
+  userId            String
+  gameId            String
+  message           String
+  created_at        DateTime
+  updated_at        DateTime      @default(now())
+
+  users             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game              Game          @relation(fields: [gameId], references: [gameId], onDelete: Cascade)
+}
+
+
+model CodeStatus {
+  id                String        @id @default(uuid())
+  code              String        @unique
+  status            Boolean       @default(true)
+}

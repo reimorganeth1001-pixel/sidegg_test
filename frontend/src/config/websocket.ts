@@ -1,0 +1,11 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+export const FETCH_CHAT_MESSAGE_TIME_INTERVAL = 1000;
+
+export const WEBSOCKET_URI = process.env.NEXT_PUBLIC_WEBSOCKET_URI;
+export const WEBSOCKET_SEND_NEW_MESSAGE = process.env.NEXT_PUBLIC_WEBSOCKET_SEND_NEW_MESSAGE || "";
+export const WEBSOCKET_FETCH_MESSAGES = process.env.NEXT_PUBLIC_WEBSOCKET_FETCH_MESSAGES;
+export const WEBSOCKET_NEW_MESSAGE = process.env.NEXT_PUBLIC_WEBSOCKET_NEW_MESSAGE || "";
+export const WEBSOCKET_CHAT_HISTORY = process.env.NEXT_PUBLIC_WEBSOCKET_CHAT_HISTORY;
