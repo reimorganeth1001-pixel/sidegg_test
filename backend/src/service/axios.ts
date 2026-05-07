@@ -3,6 +3,13 @@ import https from 'https';
 
 import { espnConfig } from '../config';
 
+/**
+ * Preconfigured Axios instance for talking to the ESPN API.
+ *
+ * - `baseURL` is driven by `ESPN_SERVER` in config/env.
+ * - TLS verification is disabled to support self-signed certs in some environments.
+ *   If you control the endpoint, prefer enabling verification in production.
+ */
 export const espnServer = axios.create({
   baseURL: espnConfig.ESPN_SERVER,
   httpsAgent: new https.Agent({

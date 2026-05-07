@@ -6,6 +6,17 @@ import {
 
 import { code } from '@/feature';
 
+/**
+ * Validates a user-provided code and updates its status (e.g. consumed/active),
+ * depending on business rules implemented in the feature layer.
+ *
+ * Expects:
+ * - `req.body.code`: string
+ *
+ * Responds:
+ * - 200: `{ data: <verificationResult>, error: "" }`
+ * - 500: `{ error: <message> }`
+ */
 export const searchCodeAndUpdateStatus = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if(!req.body?.code) {

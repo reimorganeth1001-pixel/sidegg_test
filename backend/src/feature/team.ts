@@ -4,6 +4,12 @@ import {
   teamType,
 } from '@/types';
 
+/**
+ * Upserts team metadata from ESPN into the local database.
+ *
+ * - Skips teams that already exist (by `id`).
+ * - Inserts basic descriptive fields (name, slug, logo, etc.).
+ */
 export const updateTeams = async(teams:teamType.Team[]): Promise<defaultType.dbGetResponse> => {
     try {
         for (const team of teams) {

@@ -5,6 +5,13 @@ import { espnType } from '@/types';
 
 import { analyseGame } from './game';
 
+/**
+ * High-level ESPN integration entrypoint.
+ *
+ * - Calls the scoreboard API to get current events.
+ * - For each event, calls the summary API and merges extra fields (period/status/startDate).
+ * - Delegates to `analyseGame` to normalize into internal `games`, `teams`, and `gameActions`.
+ */
 export const fetchNBAData = async (): Promise<espnType.FetchNBADataResponse> => {
   try {
     const response = await espnServer.get(`/${espnConfig.ESPN_BASIC_URI}/${espnConfig.ESPN_SCOREBOARD_API}`);
@@ -54,6 +61,12 @@ export const fetchNBAData = async (): Promise<espnType.FetchNBADataResponse> => 
   }
 };
 
+/**
+ * Fetches the *raw* ESPN summary payloads for all games on the scoreboard.
+ *
+ * This is mainly useful for debugging mapping logic or when you need information
+ * that is not yet modeled in the internal types.
+ */
 export const fetchRawNBAData = async (): Promise<espnType.FetchRawNBADataResponse> => {
   try {
     const response = await espnServer.get(`/${espnConfig.ESPN_BASIC_URI}/${espnConfig.ESPN_SCOREBOARD_API}`);
@@ -90,6 +103,11 @@ export const fetchRawNBAData = async (): Promise<espnType.FetchRawNBADataRespons
   }
 };
 
+/**
+ * Look up a single game + its teams by id from the local database.
+ *
+ * The timestamps are converted to ISO strings so the API surface is JSON-safe.
+ */
 export const searchGameInfo = async (
   gameId: string
 ): Promise<espnType.searchGameResponse> => {
