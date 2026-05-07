@@ -7,6 +7,12 @@ import {
 import { chat } from '@/feature';
 import { chatType } from '@/types';
 
+/**
+ * Internal helper used by non-HTTP call sites (e.g. socket handlers).
+ *
+ * @param param The game id to fetch messages for.
+ * @returns An object with either `message` (success) or `error` (failure).
+ */
 export const handleFetchMessages = async (param: string) => {
     try {
         const result = await chat.handleFetchMessages(param);
@@ -22,6 +28,16 @@ export const handleFetchMessages = async (param: string) => {
     
 }
 
+/**
+ * REST endpoint handler for retrieving chat messages for a given game.
+ *
+ * Expects:
+ * - `req.body.gameId`: string
+ *
+ * Responds:
+ * - 200: `{ data: <messages>, status: 200 }`
+ * - 500: `{ error: <message> }`
+ */
 export const fetchMessages = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if(!req.body.gameId){
@@ -47,6 +63,14 @@ export const fetchMessages = async (req: Request, res: Response, next: NextFunct
     
 }
 
+/**
+ * Internal helper used by non-HTTP call sites (typically Socket.IO).
+ *
+ * Validates required fields and forwards the request to the feature layer.
+ *
+ * @param param New message payload (userId/gameId/message).
+ * @returns An object with either `message` (success) or `error` (failure).
+ */
 export const handleNewMessages = async (param: chatType.newMessageParam) => {
     try {
         if(!param.userId){

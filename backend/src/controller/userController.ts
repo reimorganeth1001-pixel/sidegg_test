@@ -8,6 +8,16 @@ import { user } from '@/feature';
 import { userType } from '@/types';
 import { espnConfig } from '@/config';
 
+/**
+ * Creates a new user record.
+ *
+ * Expects:
+ * - `req.body.userInfo`: partial `UserInfo` payload (name/email/phone/twitter).
+ *
+ * Notes:
+ * - Missing optional fields are stored as `undefined`.
+ * - `name` defaults to `"User"` if not provided.
+ */
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if(!req.body?.userInfo) {
@@ -39,6 +49,14 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
   }
 }
 
+/**
+ * Updates user profile info and related data (feature-layer defined).
+ *
+ * Expects:
+ * - `req.body.userInfo.email`: string (required identifier for update)
+ * - `req.body.updateData`: string (feature-layer meaning)
+ * - `req.body.selectedGameId`: string (optional context)
+ */
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if(!req.body?.userInfo.email) {
@@ -73,6 +91,13 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
   }
 }
 
+/**
+ * Updates a user's status field (e.g. onboarding step, active flag, etc.).
+ *
+ * Expects:
+ * - `req.body.userInfo`: `UserInfo`
+ * - `req.body.updateData`: number
+ */
 export const updateUserStatus = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if(!req.body?.userInfo) {
@@ -106,6 +131,14 @@ export const updateUserStatus = async (req: Request, res: Response, next: NextFu
   }
 }
 
+/**
+ * Associates a user with a game + team selection (i.e. "play game" action).
+ *
+ * Expects:
+ * - `req.body.playGameInfo.userId`: string
+ * - `req.body.playGameInfo.gameId`: string
+ * - `req.body.playGameInfo.teamId`: string
+ */
 export const playGame = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if(!req.body?.playGameInfo.userId) {
@@ -144,6 +177,13 @@ export const playGame = async (req: Request, res: Response, next: NextFunction) 
   }
 }
 
+/**
+ * Fetches the active game context for a given user.
+ *
+ * Expects:
+ * - `req.body.userId`: string
+ * - `req.body.selectedGameId`: string (optional)
+ */
 export const getUserGameInfo = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if(!req.body?.userId) {
@@ -171,6 +211,12 @@ export const getUserGameInfo = async (req: Request, res: Response, next: NextFun
   }
 }
 
+/**
+ * Returns the relevant in-game events for a user/game/team selection.
+ *
+ * Expects:
+ * - `req.body.playGameInfo`: `{ userId, gameId, teamId }`
+ */
 export const getUserGameEvents = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if(!req.body?.playGameInfo) {
@@ -203,6 +249,12 @@ export const getUserGameEvents = async (req: Request, res: Response, next: NextF
   }
 }
 
+/**
+ * Updates the user's points for a game based on initial score snapshot.
+ *
+ * Expects:
+ * - `req.body.UpdateUserGameInfo`: `{ userId, gameId, teamId, initialScore }`
+ */
 export const setUserGamePoints = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
@@ -237,6 +289,12 @@ export const setUserGamePoints = async (req: Request, res: Response, next: NextF
   }
 }
 
+/**
+ * Fetches a user's profile info by id.
+ *
+ * Expects:
+ * - `req.body.userId`: string
+ */
 export const getUserInfo = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if(!req.body?.userId) {
@@ -264,6 +322,14 @@ export const getUserInfo = async (req: Request, res: Response, next: NextFunctio
   }
 }
 
+/**
+ * Returns game details for a user’s active game selection.
+ *
+ * Expects:
+ * - `req.body.playGameInfo.userId`: string
+ * - `req.body.playGameInfo.gameId`: string
+ * - `req.body.playGameInfo.teamId`: string (currently optional/unchecked)
+ */
 export const getUserGameDetails = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if(!req.body?.playGameInfo.userId) {
@@ -305,6 +371,14 @@ export const getUserGameDetails = async (req: Request, res: Response, next: Next
   }
 }
 
+/**
+ * Returns either "get" or "loss" game points and solution details.
+ *
+ * Expects:
+ * - `req.body.playGameInfo.userId`: string
+ * - `req.body.playGameInfo.gameId`: string
+ * - `req.body.playGameInfo.teamId`: string (currently optional/unchecked)
+ */
 export const getGetorLoassGamePointsAndSol = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if(!req.body?.playGameInfo.userId) {

@@ -1,6 +1,15 @@
 import prisma from '@/service/db';
 import { chatType } from '@/types';
 
+/**
+ * Fetch all chat messages for a game, joined with user + team context.
+ *
+ * - Orders messages chronologically.
+ * - Enriches each message with:
+ *   - `userName`
+ *   - `teamName`
+ *   - `status` from `UserGame` for that game.
+ */
 export const handleFetchMessages = async (gameId: string): Promise<chatType.MessageResponseType> => {
 
     try {
@@ -49,6 +58,12 @@ export const handleFetchMessages = async (gameId: string): Promise<chatType.Mess
 
 
 
+/**
+ * Persist a new chat message and return a fully-hydrated message record.
+ *
+ * - Inserts into `chat`.
+ * - Looks up the associated `UserGame` to attach `userName`, `teamName`, and `status`.
+ */
 export const handleNewMessages = async (param: chatType.newMessageParam) => {
     try {
       // Create a new chat message

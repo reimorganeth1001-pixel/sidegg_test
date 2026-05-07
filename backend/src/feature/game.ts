@@ -6,6 +6,12 @@ import {
 } from '@/types';
 import { game } from '.';
 
+/**
+ * Takes raw ESPN game JSON and splits it into three normalized collections:
+ * - `games`: venue + matchup metadata
+ * - `teams`: unique team records across all games
+ * - `gameActions`: flattened play-by-play events
+ */
 export const analyseGame = (data: any[]): gameType.AnalyseGameResponse => {
     const gameData: gameType.Game[] = [];
     const gameActions: gameType.GameAction[] = [];
@@ -31,6 +37,9 @@ export const analyseGame = (data: any[]): gameType.AnalyseGameResponse => {
     }
   }
 
+  /**
+   * Extracts and normalizes team information from a single ESPN game payload.
+   */
   const parseTeamData = (game: any): teamType.getTeamsResponse => {
     let teamData: teamType.Team[] = [];
    
@@ -52,6 +61,9 @@ export const analyseGame = (data: any[]): gameType.AnalyseGameResponse => {
     }
   };
   
+  /**
+   * Extracts and normalizes game-level metadata (venue, teams, status, timings).
+   */
   const parseGameData = (game: any): gameType.ParseGameDataResponse => {
     let gameData: gameType.Game = {
         gameId: '',
@@ -88,6 +100,13 @@ export const analyseGame = (data: any[]): gameType.AnalyseGameResponse => {
     }
   };
   
+  /**
+   * Flattens the ESPN `plays` array into internal `GameAction` records.
+   *
+   * Notes:
+   * - Uses the ESPN play `id` prefix as the game id.
+   * - If team is missing, defaults `teamId` to `"0"` so callers can filter/ignore.
+   */
   const parseGameAction = (game: any): gameType.ParseGameActionResponse => {
     const gameActionData: gameType.GameAction[] = [];
   
@@ -125,6 +144,12 @@ export const analyseGame = (data: any[]): gameType.AnalyseGameResponse => {
     }
   };
 
+/**
+ * Upserts `Game` records for all games returned by ESPN.
+ *
+ * - Existing records are updated with latest metadata and `lastUpdated` timestamp.
+ * - New records are created with `startTime` initialized from ESPN.
+ */
 export const updateGames = async(games: gameType.Game[]): Promise<defaultType.dbGetResponse> => {
     try {
         for (const game of games) {
@@ -170,6 +195,12 @@ export const updateGames = async(games: gameType.Game[]): Promise<defaultType.db
     }
 }
 
+/**
+ * Inserts new `GameAction` rows and ensures the referenced `ActionType` exists.
+ *
+ * - Skips `GameAction` records that already exist (by `uid`).
+ * - Creates `ActionType` skeleton records on first sight of a new `id`.
+ */
 export const updateGameActions = async(actions: gameType.GameAction[]): Promise<defaultType.dbGetResponse> => {
     try {
         for (const [index, action] of actions.entries()) {
@@ -230,6 +261,12 @@ export const updateGameActions = async(actions: gameType.GameAction[]): Promise<
     }
 }
 
+/**
+ * Returns all scoring actions for a game, joined with human-readable labels.
+ *
+ * - Filters out actions where `pointsValue` is 0.
+ * - Normalizes the payload into a UI-friendly shape.
+ */
 export const fetchGameActions = async (gameId: string): Promise<gameType.gameActionsResponse> => {
   try {
     const actions = await prisma.gameAction.findMany({
@@ -288,6 +325,11 @@ export const fetchGameActions = async (gameId: string): Promise<gameType.gameAct
   }
 };
 
+/**
+ * Aggregate the total score for a given team in a game.
+ *
+ * This is computed from `gameAction.scoreValue` for the chosen team.
+ */
 export const fetchGameScore = async (gameId: string, teamName: string): Promise<gameType.TeamScoreResponse> => {
   try {
     const team = await prisma.team.findFirst({
@@ -322,6 +364,11 @@ export const fetchGameScore = async (gameId: string, teamName: string): Promise<
 };
 
 
+/**
+ * Returns a list of detailed games filtered by status or a specific game id.
+ *
+ * Used by the frontend to render the main game selection / overview.
+ */
 export const fetchGameInitialInfo = async (status: string, selectedGameId?: string): Promise<gameType.DetailedGameResponse> => {
   try {
     let games;
@@ -447,6 +494,11 @@ export const fetchGameInitialInfo = async (status: string, selectedGameId?: stri
 };
 
 
+/**
+ * Returns the current period and the latest visible clock for a game.
+ *
+ * Clock is taken from the most recent `gameAction` row, if any.
+ */
 export const fetchPeriodClock = async (gameId: string): Promise<gameType.PeriodClockResponse> => {
   try {
     const game = await prisma.game.findUnique({

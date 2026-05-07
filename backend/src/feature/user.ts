@@ -6,6 +6,12 @@ import {
 } from '@/types';
 import { Prisma } from '@prisma/client';
 
+/**
+ * Creates a user if one does not already exist with the same email/twitter/phone.
+ *
+ * - If a matching user exists, that record is returned instead of creating a new one.
+ * - Optional fields are only persisted when provided.
+ */
 export const createUser = async(userInfo: userType.UserInfo): Promise<userType.createUserResponse> => {
     const userData = {
         userName: userInfo.name,
@@ -74,6 +80,9 @@ export const createUser = async(userInfo: userType.UserInfo): Promise<userType.c
     }
 }
 
+/**
+ * Fetch a user by id, returning only public profile fields.
+ */
 export const getUserInfo = async(userId: string): Promise<userType.createUserResponse> => {
     try {
         const user = await prisma.user.findFirst({
@@ -106,6 +115,12 @@ export const getUserInfo = async(userId: string): Promise<userType.createUserRes
     }
 }
 
+/**
+ * Update a user's display name and selected game for the current session.
+ *
+ * - Uses email as the unique identifier.
+ * - If another user already has the same name + selected game, that record is reused.
+ */
 export const updateUser = async(userInfo: userType.UserInfo, updateData: string, selectedGameId:string): Promise<userType.createUserResponse> => {
     const userData = {
         userName: userInfo.name,
@@ -159,6 +174,9 @@ export const updateUser = async(userInfo: userType.UserInfo, updateData: string,
     }
 }
 
+/**
+ * Update the numeric `status` field for a user (e.g. onboarding steps).
+ */
 export const updateUserStatus = async(userInfo: userType.UserInfo, status: number): Promise<userType.createUserResponse> => {
     const userData = {
         userName: userInfo.name,
@@ -199,6 +217,12 @@ export const updateUserStatus = async(userInfo: userType.UserInfo, status: numbe
     }
 }
 
+/**
+ * Ensure a `userGame` row exists for a (user, game, team) combination.
+ *
+ * - If the user is already playing the game, returns that record.
+ * - Otherwise creates a new `userGame` with initial status/score.
+ */
 export const playGame = async(playInfo: userType.playGameInfo): Promise<userType.playGameResponse> => {
     try {        
         const playGameInfo: userType.playGameInfo = {
@@ -271,6 +295,9 @@ export const playGame = async(playInfo: userType.playGameInfo): Promise<userType
     }
 }
 
+/**
+ * Fetch basic game info (team + score) for a given user+game pair.
+ */
 export const getUserGameInfo = async(userId: string, selectedGameId:string): Promise<userType.UserGameInfoResponse> => {
     try {       
         const userGameInfo = await prisma.userGame.findFirst({
@@ -299,6 +326,13 @@ export const getUserGameInfo = async(userId: string, selectedGameId:string): Pro
     }
 }
 
+/**
+ * Incrementally apply all game actions since the user joined and update scores.
+ *
+ * Returns:
+ * - Updated `userGame` score for this game
+ * - Total user score across all games is also updated.
+ */
 export const getUserGameEvents = async(playInfo: userType.playGameInfo): Promise<userType.userScoreResponse> => {
     try {        
         const playGameInfo: userType.playGameInfo = {
@@ -472,6 +506,11 @@ export const getUserGameEvents = async(playInfo: userType.playGameInfo): Promise
     }
 }
 
+/**
+ * Apply an "initial stake" of points for a game to both the user and `userGame`.
+ *
+ * This is typically called once at the start of play.
+ */
 export const setUserGamePoints = async(playInfo: userType.UpdateUserGameInfo): Promise<userType.UpdateUserGameScoreResponse> => {
     try {  
         await prisma.user.update({
@@ -515,6 +554,11 @@ export const setUserGamePoints = async(playInfo: userType.UpdateUserGameInfo): P
     }
 }
 
+/**
+ * Compute the net result of a finished game for a user in:
+ * - raw score points
+ * - "sol" units (score scaled by 1/200)
+ */
 export const getGetorLoassGamePointsAndSol = async (playInfo: userType.playGameInfo): Promise<userType.getLoassGamePointsAndSolResponse> => {
     try {
         const totalScore = await prisma.userStats.aggregate({
@@ -562,6 +606,17 @@ export const getGetorLoassGamePointsAndSol = async (playInfo: userType.playGameI
         }
     }
 }
+
+/**
+ * Detailed rollup for a user and game:
+ * - Applies all scoring rules (including bonus actions like assists/blocks/steals/winner).
+ * - Updates `userGame` and global `user` scores.
+ * - Returns:
+ *   - userScore (for this game)
+ *   - current period + clock
+ *   - list of per-action contributions
+ *   - aggregate team scores.
+ */
 export const getUserGameDetails = async (playInfo: userType.playGameInfo): Promise<userType.DetailedUserGameResponse> => {
     try {        
         if (!playInfo.userId || playInfo.userId === "") {

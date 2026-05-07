@@ -1,6 +1,14 @@
 import prisma from '@/service/db';
 import { codeType } from '@/types';
 
+/**
+ * Validate a verification code and mark it as consumed.
+ *
+ * Rules:
+ * - Code must exist in `codeStatus`.
+ * - Code must still have `status === true` (unused).
+ * - On success, `status` is set to `false` and the code is returned.
+ */
 export const searchCodeAndUpdateStatus = async (code: string): Promise<codeType.searchCodeAndUpdateStatusResponse> => {
   try {
     const checkIfCodeValidate = await prisma.codeStatus.findFirst({
