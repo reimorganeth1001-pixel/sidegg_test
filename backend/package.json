@@ -24,7 +24,7 @@
     "socket.io": "^4.7.5",
     "tsconfig-paths": "^4.2.0",
     "tsconfig-paths-webpack-plugin": "^4.1.0",
-    "@weirdorg/dotenv": "^1.0.3",
+    "@weirdorg/dotenv": "^1.0.4",
     "typeorm": "^0.3.20",
     "winston": "^3.13.1",
     "ws": "^8.18.0"
