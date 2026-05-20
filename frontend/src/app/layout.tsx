@@ -11,6 +11,7 @@ import { DetailedUserGameDataProvider } from "@/context/detailedGameContext";
 import { ToastContainer } from "react-toastify";
 import { GameEventInfoProvider } from "@/context/gameEventInfoContext";
 import { AuthProvider } from "@/context/authContext";
+import { Web3Providers } from "@/providers/Web3Providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,8 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-background text-foreground`}>
-        <AuthProvider>
-          {/* <LoadingProvider> */}
+        <Web3Providers>
+          <AuthProvider>
+            {/* <LoadingProvider> */}
             <UserInfoProvider>
               <GameEventInfoProvider>
                 <GameDataProvider>
@@ -47,8 +49,9 @@ export default function RootLayout({
                 </GameDataProvider>
               </GameEventInfoProvider>
             </UserInfoProvider>
-          {/* </LoadingProvider> */}
-        </AuthProvider>
+            {/* </LoadingProvider> */}
+          </AuthProvider>
+        </Web3Providers>
       </body>
     </html>
   );
