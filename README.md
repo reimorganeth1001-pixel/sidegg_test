@@ -392,4 +392,4 @@ Operators must ensure product, marketing, and access controls match applicable l
 
 ## License
 
-No license file is present in this repository. Add one before public distribution if required by your organization.
+MIT
