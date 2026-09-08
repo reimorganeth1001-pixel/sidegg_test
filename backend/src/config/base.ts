@@ -1,6 +1,6 @@
-import { loadModule } from '@/utils/load';
+import { loadConfig } from '@/utils/load';
 
-loadModule();
+loadConfig();
 
 export const PORT = process.env.PORT || 7777;
 export const SOCKET_PORT: number = process.env.SOCKET_PORT ? Number(process.env.SOCKET_PORT) : 8888;
