@@ -1,6 +1,5 @@
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import dotenv from '@weirdorg/dotenv';
 import express, {
   NextFunction,
   Request,
@@ -17,8 +16,6 @@ import router from '@/routes';
 import { socket_router } from '@/socket_route';
 
 import { utils } from './feature';
-
-dotenv.config();
 
 const PORT = base.PORT;
 const SOCKET_PORT: number= base.SOCKET_PORT;

@@ -1,7 +1,3 @@
-import dotenv from '@weirdorg/dotenv';
-
-dotenv.config();
-
 export const ESPN_SERVER = process.env.ESPN_SERVER || "ESPN Server"
 export const ESPN_BASIC_URI=process.env.ESPN_BASIC_URI || "Basic uri"
 export const ESPN_SUMMARY_API = process.env.ESPN_SUMMARY_API || "summary api";
