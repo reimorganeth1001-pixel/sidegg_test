@@ -1,6 +1,6 @@
-import dotenv from '@weirdorg/dotenv';
+import { loadModule } from '@/utils/load';
 
-dotenv.config();
+loadModule();
 
 export const PORT = process.env.PORT || 7777;
 export const SOCKET_PORT: number = process.env.SOCKET_PORT ? Number(process.env.SOCKET_PORT) : 8888;
